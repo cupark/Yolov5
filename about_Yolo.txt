@@ -30,8 +30,26 @@ Yolov1 Network
 ==============================================================================================================================
 
 
+Yolov5 Architecture
 ==============================================================================================================================
- Yolov5 Architecture
+ What is Backbone Network in Deeplearning
+  Backbone은 등뼈라는 의미로, 뇌와 몸의 각 부위를 이어주는 척추를 의미한다. 다양한 Network를 상호 연결하는 컴퓨터 네트워크의 일부다. 
+  예를 들어 ResNet같은 경우는 Detection, Segmentation, Pose Estimation, Depth Estimation 등에서 Backbone으로 사용된다.
+  즉, 입력정보에 대한 모듈에 대한 처리를 출력으로 보내는 역할이다. (뇌 - 척추 - 팔다리)
+  
+  
+  Backbone => Pre-Train (ImageNet Data) => Classification Network => Features => Detection Network => Fine-tune (Target Data) 
+                                                                              => Segmentation
+                                                                              => Pose Estimation
+                                                                              => Depth Estimation
+  
+   - backbone은 이미지로부터 Feature Map을 추출하는 부분으로 CSP-Darknet을 사용한다. 
+     4가지의 Backbone을 사용한다.
+      1) Yolov5s
+      2) Yolov5m
+      3) Yolov5l
+      4) Yolov5x
+      
  
  
  
