@@ -117,7 +117,7 @@ Yolov5 Architecture
             Hardswish의 경우 swish함수의 변형인데 ReLU를 대체하기 위하여 구글에서 고안한 함수이다. 
             
             **Sigmoid함수에 x를 곱한 간단한 형태인데 Hardswish는 추후에 내용을 보강하겠다.**
-            Hardswish Activate Function 
+            Hardswish Activate Function (Swish = SiLU(Sigmoid Linear Unit)로도 불림)
              - Activate Function의 사용 목적: NN이 어떠한 목적으로 만들었는지에 따라서 선형 함수가 될 수도 있고 복잡도에 따라서 비선형 함수를 학습하기를 바랄 수 있다.
                                              bias를 통한 단순 선형성을 더한다면 복잡한 함수를 만들 수 없어 비교적 복잡도가 높은 비선형 함수를 만들기 위하여 활성화 함수를
                                              사용한다. 
@@ -131,6 +131,26 @@ Yolov5 Architecture
                             3) swish는 위로는 상한이 없지만 아래로는 하한이 존재하기 때문에 Regulization에서 좋은 효과를 갖는다. 또한 비 단조함수로 작은 음수에도 
                                음수로 결과를 만들기 때문에 데이터 손실을 줄일 수 있다.
                             4) Selu의 경우 internal normalization이 내포되어 있기 때문에 동일한 장점을 지닌 swish와 비교하여 더 나은 경우도 있을 수 있다.
+                            
+  3. Bottleneck : CNN의 BottleNeck을 이해하기전 선수 지식이 필요하다. Convolution의 Parameter를 계산할 줄 알아야 하는데 식은 다음과 같다. 
+                  ** Convolution Parameter = Kernel Size x Kernel Size x Input Channel x Output Channel
+                  BottleNect의 핵심은 1x1 Convolution에 있다. (Pointwise Convolution = Depthwise Separable Convolution)
+                  ex1) Convolution Parameter 1 x1 = 1 x 1 x Input Channel x Output Channel 
+                       => 1 x 1 Convolution은 연산량이 작지만 Feature Map(Output Channel)의 변화는 크기 때문에 BottleNeck을 사용하여 변화를 준다.
+                  
+                  ex2) BottleNeck을 활용한 채널의 축소 (Feature Map의 축소) - Example of the difference between Standard and BottleNeck parameters in ResNet 참고
+                       (1) Input(B, 256, 320, 320) : B = Batch Size, 256 = InputChannel, 320 x 320 = Output Channel
+                       (2) Bottleneck 1 x 1 Convolution, out 64 
+                       (3) Input Channel 256 -> Output Channel 64 : 채널이 축소된다. 즉, 채널을 256에서 64로 강제로 축소하여 연산량을 줄인다. 
+                       (4) Convolution의 사이즈가 2 x 2 이상 되어야 공간적인 Feature Map이 추출 됨에 따라 1 x 1 사이즈에서는 Spatial(공간적인) 특징은 내포하지 않는다.
+                       (5) Bottleneck 3 x 3 Convolution, out 64 : Spatial한 특징(Feature Map)을 내포하는 64개의 Output Channel로 변환한다. 
+                       (6) Bottleneck 1 x 1 Convolution, out 256 : Spatial 특징을 제외한 채널을 256으로 증가 시킨다. 
+                       (7) (3) ~ (6)의 Bottleneck 구조를 통하여 Convolution Parameter의 값을 줄인다. 단, Parameter의 값이 줄이며 연산량을 최소화 시킬 수 있으나 
+                           정보의 손실을 불러일으키기 때문에 모델의 정확도를 떨어트릴 수 있다. 이러한 이유로 연산량과 손실값에 대한 Tradeoff를 적절하게 해주어야 한다.
+                           
+                       
+                  
+                  
                                          
             
             
