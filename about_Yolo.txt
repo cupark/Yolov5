@@ -107,7 +107,7 @@ Yolov5 Architecture
           return self.conv(torch.cat([x[..., ::2, ::2], x[..., 1::2, ::2], x[..., ::2, 1::2], x[..., 1::2, 1::2]], 1))
             
   
-  2. Conv : 일반적인 Convolution + Batch_Normalize Layer이다. 
+  2. Conv : 일반적인 Convolution + Batch_Normalize Layer이다. (두개의 연산을 합성하는것은 프로그래밍 스킬로 해석할 수 있다.)
             Conv Layer와 BatchNorm을 합치는 이유는 각각의 수식을 합성하여 하나의 식으로만 사용할 수 있기 때문이다.
             Conv Layer의 Weight값을 Batchnorm의 fused weight로 bias값을 fused bias으로 대체하면 BacthNorm을 생략한채
             Conv Layer 하나로 사용할 수 있다. 
@@ -117,7 +117,21 @@ Yolov5 Architecture
             Hardswish의 경우 swish함수의 변형인데 ReLU를 대체하기 위하여 구글에서 고안한 함수이다. 
             
             **Sigmoid함수에 x를 곱한 간단한 형태인데 Hardswish는 추후에 내용을 보강하겠다.**
-            
+            Hardswish Activate Function 
+             - Activate Function의 사용 목적: NN이 어떠한 목적으로 만들었는지에 따라서 선형 함수가 될 수도 있고 복잡도에 따라서 비선형 함수를 학습하기를 바랄 수 있다.
+                                             bias를 통한 단순 선형성을 더한다면 복잡한 함수를 만들 수 없어 비교적 복잡도가 높은 비선형 함수를 만들기 위하여 활성화 함수를
+                                             사용한다. 
+             - swish를 사용하는 이유: 주로 사용하는 ReLU의 경우 y의 값은 음수부터 0까지 값이 '0' 이기 때문에 결국 음수의 범위에서의 미분은 '0'을 갖게 되어 
+                                         NN의 Update가 무의미해진다. 이를 방지하고자 LeakyReLU로 대체하기도 하였지만 효과적이지 않다 (실제 검토해볼필요 있음)
+                                         반면에 swish 함수의 경우 ReLU에 비하여 조금더 smooth한 그래프를 갖는다. 또한 비 단조함수로써 음수값이 '0'이 되지 않는다.
+                                         따라서 음수의 범위에서의 미분에 대한 문제를 해결 할 수 있기 때문에 사용된다. 
+             - swish의 특성: 
+                            1) sigmoid나 tanh과 같은 함수와 달리 swish는 위로의 경계가 없어 기울기 '0'근처의 값을 갖는 gradient에서 유용하게 동작한다. 
+                            2) smooth한 형태를 갖고 있어 최적화(Error검출)에 알맞으며 초기값과 Learning Rate에 덜 민감하다.
+                            3) swish는 위로는 상한이 없지만 아래로는 하한이 존재하기 때문에 Regulization에서 좋은 효과를 갖는다. 또한 비 단조함수로 작은 음수에도 
+                               음수로 결과를 만들기 때문에 데이터 손실을 줄일 수 있다.
+                            4) Selu의 경우 internal normalization이 내포되어 있기 때문에 동일한 장점을 지닌 swish와 비교하여 더 나은 경우도 있을 수 있다.
+                                         
             
             
             
