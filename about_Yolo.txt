@@ -148,7 +148,17 @@ Yolov5 Architecture
                        (7) (3) ~ (6)의 Bottleneck 구조를 통하여 Convolution Parameter의 값을 줄인다. 단, Parameter의 값이 줄이며 연산량을 최소화 시킬 수 있으나 
                            정보의 손실을 불러일으키기 때문에 모델의 정확도를 떨어트릴 수 있다. 이러한 이유로 연산량과 손실값에 대한 Tradeoff를 적절하게 해주어야 한다.
                            
-                       
+  4. BottleneckCSP : Yolov5의 핵심이다. DenseNet의 표방하여 만들어 졌다. CSPDarknet 참고필요 
+  
+  5. DenseNet : Densely Connected Convolutional Network로 ResNet, Pre-Activation ResNet와 비교하여 적은 수의 파라미터로 높은 성능을 갖는다. 
+                DenseNet의 특징은 모든 Layer가 처음부터 마지막까지 직렬로 연결되어 있으며 그렇기 때문에 사전 준비되어야하는 점과 기존의 문제를 해결하는 점이 있다.
+                1) Convolution Layer의 Feature Map이 다음 Convolution Layer에 직접 전달되기 때문에 Layer 연결 시에 Feature Map의 사이즈를 맞춰야된다.
+                2) 이전 Feature Map이 다음 Feature Map에 전달되는 방식으로 처음부터 마지막까지 연결되기 때문에 Gradient Reuse에 대한 문제가 해소된다.(Information Flow)가 
+                   향상된다.)
+                3) Feature Map을 계속 하여 연결하기 때문에 Channel의 수가 무수하게 많아지는 문제가 있기 때문에 Channel의 수를 굉장히 작은 값을 사용해야한다.
+                4) 3)의 이유로 Channel을 적게 사용하기 때문에 Parameter의 수도 줄어들어 연산량이 적어진다. 
+                5) Layer 간 연결을 할때 ResNet과 같이 덧셈(Information Flow의 영향으로 지연될 가능성 존재)등의 연산을 하지 않고 단순하게 Concatenate 한다.
+                
                   
                   
                                          
